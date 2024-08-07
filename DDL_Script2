@@ -1,0 +1,4831 @@
+{
+  "definitions": {
+    "CatalogService": {
+      "@source": "srv/catalog_service.cds",
+      "kind": "service"
+    },
+    "CatalogService.ProductsSrv": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.reports.Products"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "Name"
+              ],
+              "as": "ProductName"
+            },
+            {
+              "ref": [
+                "Description"
+              ]
+            },
+            {
+              "ref": [
+                "ImageUrl"
+              ]
+            },
+            {
+              "ref": [
+                "ReleaseDate"
+              ]
+            },
+            {
+              "ref": [
+                "DiscontinuedDate"
+              ]
+            },
+            {
+              "ref": [
+                "Price"
+              ]
+            },
+            {
+              "ref": [
+                "Height"
+              ]
+            },
+            {
+              "ref": [
+                "Width"
+              ]
+            },
+            {
+              "ref": [
+                "Depth"
+              ]
+            },
+            {
+              "ref": [
+                "Quantity"
+              ]
+            },
+            {
+              "ref": [
+                "UnitOfMeasures"
+              ],
+              "as": "ToUnitOfMeasure"
+            },
+            {
+              "ref": [
+                "Currency"
+              ],
+              "as": "ToCurrency"
+            },
+            {
+              "ref": [
+                "Category"
+              ],
+              "as": "ToCategory"
+            },
+            {
+              "ref": [
+                "Category",
+                "Name"
+              ],
+              "as": "Category"
+            },
+            {
+              "ref": [
+                "DimensionsUnit"
+              ],
+              "as": "ToDimensionsUnit"
+            },
+            {
+              "ref": [
+                "SalesData"
+              ]
+            },
+            {
+              "ref": [
+                "Supplier"
+              ]
+            },
+            {
+              "ref": [
+                "Review"
+              ]
+            },
+            {
+              "ref": [
+                "Rating"
+              ]
+            },
+            {
+              "ref": [
+                "StockAvailability"
+              ]
+            },
+            {
+              "ref": [
+                "ToStockAvailiability"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "ProductName": {
+          "@mandatory": true,
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "@mandatory": true,
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "@mandatory": true,
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "@mandatory": true,
+          "@assert.range": [
+            0,
+            20
+          ],
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "ToUnitOfMeasure": {
+          "@mandatory": true,
+          "type": "cds.Association",
+          "target": "CatalogService.VH_UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ],
+              "as": "ID"
+            }
+          ]
+        },
+        "ToCurrency": {
+          "@mandatory": true,
+          "type": "cds.Association",
+          "target": "CatalogService.VH_Currencies",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ],
+              "as": "ID"
+            }
+          ]
+        },
+        "ToCategory": {
+          "@mandatory": true,
+          "type": "cds.Association",
+          "target": "CatalogService.VH_Categories",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ],
+              "as": "ID"
+            }
+          ]
+        },
+        "Category": {
+          "@readonly": true,
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ToDimensionsUnit": {
+          "type": "cds.Association",
+          "target": "CatalogService.VH_DimensionUnits",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ],
+              "as": "ID"
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CatalogService.SalesDataSrv",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "ToProduct"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "CatalogService.SupplierSrv",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CatalogService.ReviewSrv",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "ToProduct"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Rating": {
+          "@Core.Computed": true,
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "StockAvailability": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        },
+        "ToStockAvailiability": {
+          "type": "cds.Association",
+          "target": "CatalogService.StockAvailabilitySrv",
+          "on": [
+            {
+              "ref": [
+                "ToStockAvailiability",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self",
+                "StockAvailability"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.SupplierSrv": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.sales.Suppliers"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "Name"
+              ]
+            },
+            {
+              "ref": [
+                "Email"
+              ]
+            },
+            {
+              "ref": [
+                "Phone"
+              ]
+            },
+            {
+              "ref": [
+                "Fax"
+              ]
+            },
+            {
+              "ref": [
+                "Product"
+              ],
+              "as": "ToProduct"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Name"
+            ]
+          },
+          "notNull": true
+        },
+        "Email": {
+          "type": "cds.String"
+        },
+        "Phone": {
+          "type": "cds.String"
+        },
+        "Fax": {
+          "type": "cds.String"
+        },
+        "ToProduct": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CatalogService.ProductsSrv",
+          "on": [
+            {
+              "ref": [
+                "ToProduct",
+                "Supplier"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.ReviewSrv": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.ProductReview"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "Name"
+              ]
+            },
+            {
+              "ref": [
+                "Rating"
+              ]
+            },
+            {
+              "ref": [
+                "Comment"
+              ]
+            },
+            {
+              "ref": [
+                "createdAt"
+              ]
+            },
+            {
+              "ref": [
+                "Product"
+              ],
+              "as": "ToProduct"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "type": "cds.String"
+        },
+        "Rating": {
+          "type": "cds.Integer"
+        },
+        "Comment": {
+          "type": "cds.String"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "ToProduct": {
+          "type": "cds.Association",
+          "target": "CatalogService.ProductsSrv",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.SalesDataSrv": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.sales.SalesData"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "DeliveryDate"
+              ]
+            },
+            {
+              "ref": [
+                "Revenue"
+              ]
+            },
+            {
+              "ref": [
+                "Currency",
+                "ID"
+              ],
+              "as": "CurrencyKey"
+            },
+            {
+              "ref": [
+                "DeliveryMonth",
+                "ID"
+              ],
+              "as": "DeliveryMonthId"
+            },
+            {
+              "ref": [
+                "DeliveryMonth",
+                "Description"
+              ],
+              "as": "DeliveryMonth"
+            },
+            {
+              "ref": [
+                "Product"
+              ],
+              "as": "ToProduct"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "DeliveryDate": {
+          "type": "cds.DateTime"
+        },
+        "Revenue": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "CurrencyKey": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "DeliveryMonthId": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "DeliveryMonth": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ToProduct": {
+          "type": "cds.Association",
+          "target": "CatalogService.ProductsSrv",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.StockAvailabilitySrv": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.StockAvailability"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "Description"
+              ]
+            },
+            {
+              "ref": [
+                "Product"
+              ],
+              "as": "ToProduct"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ToProduct": {
+          "type": "cds.Association",
+          "target": "CatalogService.ProductsSrv",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "CatalogService.VH_Categories": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Categories"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "as": "code"
+            },
+            {
+              "ref": [
+                "Name"
+              ],
+              "as": "Text"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "Text": {
+          "localized": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.VH_Currencies": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Currencies"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "as": "code"
+            },
+            {
+              "ref": [
+                "Description"
+              ],
+              "as": "Text"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Text": {
+          "localized": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.VH_UnitOfMeasures": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.UnitOfMeasures"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "as": "code"
+            },
+            {
+              "ref": [
+                "Description"
+              ],
+              "as": "Text"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Text": {
+          "localized": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "CatalogService.VH_DimensionUnits": {
+      "kind": "entity",
+      "@readonly": true,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.DimensionsUnits"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ID"
+              ],
+              "as": "code"
+            },
+            {
+              "ref": [
+                "Description"
+              ],
+              "as": "Text"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Text": {
+          "localized": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "MyService": {
+      "@source": "srv/catalog_service.cds",
+      "kind": "service"
+    },
+    "MyService.SupplierProductSrv": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              {
+                "id": "product_catalog.materials.Products",
+                "where": [
+                  {
+                    "ref": [
+                      "Name"
+                    ]
+                  },
+                  "=",
+                  {
+                    "val": "Bread"
+                  }
+                ]
+              }
+            ]
+          },
+          "columns": [
+            "*",
+            {
+              "ref": [
+                "Name"
+              ]
+            },
+            {
+              "ref": [
+                "Description"
+              ]
+            },
+            {
+              "ref": [
+                "Supplier",
+                "Address"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Supplier",
+                "Address",
+                "PostalCode"
+              ]
+            },
+            "=",
+            {
+              "val": 98074
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "MyService.SupplierProductSrv.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "MyService.SupplierProductSrv.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        },
+        "Address": {
+          "type": "product_catalog.address"
+        }
+      }
+    },
+    "MyService.SupplierstoSalesSrv": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Supplier",
+                "Email"
+              ]
+            },
+            {
+              "ref": [
+                "Category",
+                "Name"
+              ]
+            },
+            {
+              "ref": [
+                "SalesData",
+                "Currency",
+                "ID"
+              ]
+            },
+            {
+              "ref": [
+                "SalesData",
+                "Currency",
+                "Description"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Email": {
+          "type": "cds.String"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ID": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "MyService.EntidadInfix": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                {
+                  "id": "Supplier",
+                  "where": [
+                    {
+                      "ref": [
+                        "Name"
+                      ]
+                    },
+                    "=",
+                    {
+                      "val": "Exotic Liquids"
+                    }
+                  ]
+                },
+                "Phone"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Products",
+                "Name"
+              ]
+            },
+            "=",
+            {
+              "val": "Bread"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Phone": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "MyService.EntidadJoin": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "left",
+            "args": [
+              {
+                "ref": [
+                  "product_catalog.materials.Products"
+                ],
+                "as": "produ"
+              },
+              {
+                "ref": [
+                  "product_catalog.sales.Suppliers"
+                ],
+                "as": "sup"
+              }
+            ],
+            "on": [
+              {
+                "xpr": [
+                  {
+                    "ref": [
+                      "produ",
+                      "Supplier",
+                      "ID"
+                    ]
+                  },
+                  "=",
+                  {
+                    "ref": [
+                      "sup",
+                      "ID"
+                    ]
+                  }
+                ]
+              },
+              "and",
+              {
+                "ref": [
+                  "sup",
+                  "Name"
+                ]
+              },
+              "=",
+              {
+                "val": "Exotic Liquids"
+              }
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Phone"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "produ",
+                "Name"
+              ]
+            },
+            "=",
+            {
+              "val": "Bread"
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Phone": {
+          "type": "cds.String"
+        }
+      }
+    },
+    "ReportsSrv": {
+      "@source": "srv/catalog_service.cds",
+      "kind": "service"
+    },
+    "ReportsSrv.AverageRatingSrv": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "product_catalog.reports.AverageRating"
+          ]
+        }
+      },
+      "elements": {
+        "ProductId": {
+          "type": "cds.UUID"
+        },
+        "AverageRating": {
+          "@Core.Computed": true,
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        }
+      }
+    },
+    "ReportsSrv.EntidadCasting": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "columns": [
+            {
+              "xpr": [
+                {
+                  "ref": [
+                    "Price"
+                  ],
+                  "cast": {
+                    "type": "cds.Integer"
+                  }
+                }
+              ],
+              "as": "Price"
+            },
+            {
+              "ref": [
+                "Price"
+              ],
+              "as": "Price2",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Price": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        },
+        "Price2": {
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "product_catalog.address": {
+      "kind": "type",
+      "elements": {
+        "Street": {
+          "type": "cds.String"
+        },
+        "City": {
+          "type": "cds.String"
+        },
+        "State": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PostalCode": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "Country": {
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "product_catalog.Dec": {
+      "kind": "type",
+      "type": "cds.Decimal",
+      "precision": 16,
+      "scale": 2
+    },
+    "product_catalog.materials": {
+      "kind": "context"
+    },
+    "product_catalog.materials.Products": {
+      "kind": "entity",
+      "includes": [
+        "cuid"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.ProductReview": {
+      "kind": "entity",
+      "includes": [
+        "cuid",
+        "managed"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "Name": {
+          "type": "cds.String"
+        },
+        "Rating": {
+          "type": "cds.Integer"
+        },
+        "Comment": {
+          "type": "cds.String"
+        },
+        "Product": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.Categories": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Categories.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.StockAvailability": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "Product": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.StockAvailability.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.StockAvailability.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.Currencies": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.UnitOfMeasures": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.UnitOfMeasures.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.DimensionsUnits": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.DimensionsUnits.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.SelProducts": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          }
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.SelProducts1": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "columns": [
+            "*"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.SelProducts2": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Name"
+              ]
+            },
+            {
+              "ref": [
+                "Price"
+              ]
+            },
+            {
+              "ref": [
+                "Quantity"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        }
+      }
+    },
+    "product_catalog.materials.SelProducts3": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "join": "left",
+            "args": [
+              {
+                "ref": [
+                  "product_catalog.materials.Products"
+                ]
+              },
+              {
+                "ref": [
+                  "product_catalog.materials.ProductReview"
+                ]
+              }
+            ],
+            "on": [
+              {
+                "ref": [
+                  "Products",
+                  "Name"
+                ]
+              },
+              "=",
+              {
+                "ref": [
+                  "ProductReview",
+                  "Name"
+                ]
+              }
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Rating"
+              ]
+            },
+            {
+              "ref": [
+                "Products",
+                "Name"
+              ]
+            },
+            {
+              "func": "sum",
+              "args": [
+                {
+                  "ref": [
+                    "Price"
+                  ]
+                }
+              ],
+              "as": "TotalPrice"
+            }
+          ],
+          "groupBy": [
+            {
+              "ref": [
+                "Rating"
+              ]
+            },
+            {
+              "ref": [
+                "Products",
+                "Name"
+              ]
+            }
+          ],
+          "orderBy": [
+            {
+              "ref": [
+                "Rating"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "Rating": {
+          "type": "cds.Integer"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "TotalPrice": {
+          "@Core.Computed": true
+        }
+      }
+    },
+    "product_catalog.materials.ProjProducts": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "product_catalog.materials.Products"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.ProjProducts2": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "product_catalog.materials.Products"
+          ]
+        },
+        "columns": [
+          "*"
+        ]
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.materials.ProjProducts3": {
+      "kind": "entity",
+      "projection": {
+        "from": {
+          "ref": [
+            "product_catalog.materials.Products"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "ReleaseDate"
+            ]
+          },
+          {
+            "ref": [
+              "Name"
+            ]
+          }
+        ]
+      },
+      "elements": {
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        }
+      }
+    },
+    "product_catalog.sales": {
+      "kind": "context"
+    },
+    "product_catalog.sales.SalesData": {
+      "kind": "entity",
+      "includes": [
+        "cuid",
+        "managed"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "DeliveryDate": {
+          "type": "cds.DateTime"
+        },
+        "Revenue": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Product": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DeliveryMonth": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Months",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.sales.Orders": {
+      "kind": "entity",
+      "includes": [
+        "cuid"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Date": {
+          "type": "cds.Date"
+        },
+        "Customer": {
+          "type": "cds.String"
+        },
+        "Item": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.OrderItems",
+          "on": [
+            {
+              "ref": [
+                "Item",
+                "Order"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.sales.OrderItems": {
+      "kind": "entity",
+      "includes": [
+        "cuid"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Order": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Orders",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Product": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Quantity": {
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "product_catalog.sales.Suppliers": {
+      "kind": "entity",
+      "includes": [
+        "cuid",
+        "managed"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "Name": {
+          "localized": true,
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Name"
+            ]
+          },
+          "notNull": true
+        },
+        "Address": {
+          "type": "product_catalog.address"
+        },
+        "Email": {
+          "type": "cds.String"
+        },
+        "Phone": {
+          "type": "cds.String"
+        },
+        "Fax": {
+          "type": "cds.String"
+        },
+        "Product": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products",
+          "on": [
+            {
+              "ref": [
+                "Product",
+                "Supplier"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.sales.Months": {
+      "kind": "entity",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ShortDescription": {
+          "localized": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.Months.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Months.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "product_catalog.reports": {
+      "kind": "context"
+    },
+    "product_catalog.reports.AverageRating": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.ProductReview"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Product",
+                "ID"
+              ],
+              "as": "ProductId"
+            },
+            {
+              "func": "avg",
+              "args": [
+                {
+                  "ref": [
+                    "Rating"
+                  ]
+                }
+              ],
+              "as": "AverageRating",
+              "cast": {
+                "type": "cds.Decimal",
+                "precision": 16,
+                "scale": 2
+              }
+            }
+          ],
+          "groupBy": [
+            {
+              "ref": [
+                "Product",
+                "ID"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ProductId": {
+          "type": "cds.UUID"
+        },
+        "AverageRating": {
+          "@Core.Computed": true,
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        }
+      }
+    },
+    "product_catalog.reports.Products": {
+      "kind": "entity",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "product_catalog.materials.Products"
+            ]
+          },
+          "mixin": {
+            "ToStockAvailiability": {
+              "type": "cds.Association",
+              "target": "product_catalog.materials.StockAvailability",
+              "on": [
+                {
+                  "ref": [
+                    "ToStockAvailiability",
+                    "ID"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "$projection",
+                    "StockAvailability"
+                  ]
+                }
+              ]
+            },
+            "ToAverageRating": {
+              "type": "cds.Association",
+              "target": "product_catalog.reports.AverageRating",
+              "on": [
+                {
+                  "ref": [
+                    "ToAverageRating",
+                    "ProductId"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "ID"
+                  ]
+                }
+              ]
+            }
+          },
+          "columns": [
+            "*",
+            {
+              "ref": [
+                "ToAverageRating",
+                "AverageRating"
+              ],
+              "as": "Rating"
+            },
+            {
+              "xpr": [
+                "case",
+                "when",
+                {
+                  "ref": [
+                    "Quantity"
+                  ]
+                },
+                ">=",
+                {
+                  "val": 8
+                },
+                "then",
+                {
+                  "val": 3
+                },
+                "when",
+                {
+                  "ref": [
+                    "Quantity"
+                  ]
+                },
+                "<",
+                {
+                  "val": 8
+                },
+                "then",
+                {
+                  "val": 2
+                },
+                "else",
+                {
+                  "val": 1
+                },
+                "end"
+              ],
+              "as": "StockAvailability",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            },
+            {
+              "ref": [
+                "ToStockAvailiability"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": true,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": true,
+          "type": "cds.String"
+        },
+        "ImageUrl": {
+          "type": "cds.String"
+        },
+        "ReleaseDate": {
+          "type": "cds.DateTime",
+          "default": {
+            "ref": [
+              "$now"
+            ]
+          }
+        },
+        "DiscontinuedDate": {
+          "type": "cds.DateTime"
+        },
+        "Price": {
+          "type": "product_catalog.Dec",
+          "precision": 16,
+          "scale": 2
+        },
+        "Height": {
+          "type": {
+            "ref": [
+              "product_catalog.materials.Products",
+              "Price"
+            ]
+          },
+          "precision": 16,
+          "scale": 2
+        },
+        "Width": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Depth": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Quantity": {
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "Supplier": {
+          "type": "cds.Association",
+          "target": "product_catalog.sales.Suppliers",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "UnitOfMeasures": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.UnitOfMeasures",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Currency": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Currencies",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "DimensionsUnit": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.DimensionsUnits",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "Category": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Categories",
+          "keys": [
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "SalesData": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.sales.SalesData",
+          "on": [
+            {
+              "ref": [
+                "SalesData",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "Review": {
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.ProductReview",
+          "on": [
+            {
+              "ref": [
+                "Review",
+                "Product"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "PriceCondition": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PriceDeterminaation": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.Products.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "ID"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        },
+        "Rating": {
+          "@Core.Computed": true,
+          "type": "cds.Decimal",
+          "precision": 16,
+          "scale": 2
+        },
+        "StockAvailability": {
+          "@Core.Computed": true,
+          "type": "cds.Integer"
+        },
+        "ToStockAvailiability": {
+          "type": "cds.Association",
+          "target": "product_catalog.materials.StockAvailability",
+          "on": [
+            {
+              "ref": [
+                "ToStockAvailiability",
+                "ID"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self",
+                "StockAvailability"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "Language": {
+      "kind": "type",
+      "@title": "{i18n>Language}",
+      "@description": "{i18n>LanguageCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Languages",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Currency": {
+      "kind": "type",
+      "@title": "{i18n>Currency}",
+      "@description": "{i18n>CurrencyCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Currencies",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Country": {
+      "kind": "type",
+      "@title": "{i18n>Country}",
+      "@description": "{i18n>CountryCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Countries",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Timezone": {
+      "kind": "type",
+      "type": "cds.Association",
+      "target": "sap.common.Timezones",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "sap.common": {
+      "kind": "context"
+    },
+    "sap.common.Locale": {
+      "kind": "type",
+      "@title": "{i18n>LanguageCode}",
+      "type": "cds.String",
+      "length": 14
+    },
+    "sap.common.Languages": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@Common.Text": {
+            "=": "name"
+          },
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Languages.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Languages.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Countries": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>CountryCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Countries.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Countries.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Currencies": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>CurrencyCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "symbol": {
+          "@title": "{i18n>CurrencySymbol}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "minorUnit": {
+          "@title": "{i18n>CurrencyMinorUnit}",
+          "type": "cds.Int16"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Timezones": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>TimeZoneCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Timezones.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Timezones.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.CodeList": {
+      "kind": "aspect",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        }
+      }
+    },
+    "sap.common.TextsAspect": {
+      "kind": "aspect",
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        }
+      }
+    },
+    "cuid": {
+      "kind": "aspect",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        }
+      }
+    },
+    "managed": {
+      "kind": "aspect",
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        }
+      }
+    },
+    "temporal": {
+      "kind": "aspect",
+      "elements": {
+        "validFrom": {
+          "@cds.valid.from": true,
+          "type": "cds.Timestamp"
+        },
+        "validTo": {
+          "@cds.valid.to": true,
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "User": {
+      "kind": "type",
+      "@title": "{i18n>UserID}",
+      "@description": "{i18n>UserID.Description}",
+      "type": "cds.String",
+      "length": 255
+    },
+    "extensible": {
+      "kind": "aspect",
+      "elements": {
+        "extensions__": {
+          "@cds.api.ignore": true,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.Products.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": null,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.Categories.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "Name": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.StockAvailability.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.Integer"
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.Currencies.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.UnitOfMeasures.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.materials.DimensionsUnits.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    },
+    "product_catalog.sales.Months.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        },
+        "ShortDescription": {
+          "localized": null,
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "sap.common.Languages.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@Common.Text": {
+            "=": "name"
+          },
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        }
+      }
+    },
+    "sap.common.Countries.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>CountryCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "sap.common.Currencies.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>CurrencyCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "sap.common.Timezones.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>TimeZoneCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    },
+    "MyService.SupplierProductSrv.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "product_catalog.materials.Products.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "ID": {
+          "@odata.containment.ignore": true,
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "Name": {
+          "localized": null,
+          "type": "cds.String",
+          "notNull": true
+        },
+        "Description": {
+          "localized": null,
+          "type": "cds.String"
+        }
+      }
+    }
+  },
+  "meta": {
+    "creator": "CDS Compiler v4.9.4",
+    "flavor": "inferred"
+  },
+  "$version": "2.0"
+}

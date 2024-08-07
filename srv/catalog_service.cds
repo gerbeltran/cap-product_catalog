@@ -18,7 +18,7 @@ using {product_catalog} from '../db/schema';
 service CatalogService {
 
     entity ProductsSrv          as
-        select from product_catalog.materials.Products {
+        select from product_catalog.reports.Products {
             ID,
             Name           as ProductName     @mandatory,
             Description                       @mandatory,
@@ -29,7 +29,13 @@ service CatalogService {
             Height,
             Width,
             Depth,
-            Quantity,
+            Quantity                          @(
+                mandatory,
+                assert.range: [
+                    0.00,
+                    20
+                ]
+            ),
             UnitOfMeasures as ToUnitOfMeasure @mandatory,
             Currency       as ToCurrency      @mandatory,
             Category       as ToCategory      @mandatory,
@@ -38,7 +44,9 @@ service CatalogService {
             SalesData,
             Supplier,
             Review,
-
+            Rating,
+            StockAvailability,
+            ToStockAvailiability,
         };
 
     @readonly
@@ -110,9 +118,72 @@ service CatalogService {
 
     @readonly
     entity VH_DimensionUnits    as
-        select from product_catalog.materials.DimensionsUnits {
+        select
             ID          as code,
-            Description as Text,
-        }
+            Description as Text
+        from product_catalog.materials.DimensionsUnits;
+}
 
+
+define service MyService {
+
+    entity SupplierProductSrv  as
+        select from product_catalog.materials.Products[Name = 'Bread']{
+            *,
+            Name,
+            Description,
+            Supplier.Address
+        }
+        where
+            Supplier.Address.PostalCode = 98074;
+
+
+    entity SupplierstoSalesSrv as
+
+        select
+            Supplier.Email,
+            Category.Name,
+            SalesData.Currency.ID,
+            SalesData.Currency.Description
+        from product_catalog.materials.Products;
+
+
+    entity EntidadInfix        as
+        select Supplier[Name = 'Exotic Liquids'].Phone from product_catalog.materials.Products
+        where
+            Products.Name = 'Bread';
+
+
+    entity EntidadJoin         as
+        select Phone from product_catalog.materials.Products as produ
+        left join product_catalog.sales.Suppliers as sup
+            on(
+                produ.Supplier.ID = sup.ID
+            )
+            and sup.Name = 'Exotic Liquids'
+        where
+            produ.Name = 'Bread';
+
+
+}
+
+
+define service ReportsSrv {
+
+    entity AverageRatingSrv as projection on product_catalog.reports.AverageRating;
+
+    entity EntidadCasting   as
+        select
+            cast(
+                Price as      Integer
+            )     as Price,
+            Price as Price2 : Integer
+        from product_catalog.materials.Products;
+
+    entity EntidadExists    as
+        select from product_catalog.materials.Products {
+            Name
+        }
+        where
+            exists Supplier[Name = 'Exotic Liquids'];
 }
