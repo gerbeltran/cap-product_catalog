@@ -1,7 +1,6 @@
 namespace com.training;
-using {
-    cuid,
-} from '@sap/cds/common';
+
+using {cuid, } from '@sap/cds/common';
 
 entity Course : cuid {
     //    key ID      : UUID;
@@ -20,6 +19,17 @@ entity StudentCourse : cuid {
     Student : Association to Student;
     Course  : Association to Course;
 }
+
+entity Orders {
+    key ClientEmail : String(65);
+        FirstName   : String(30);
+        LastName    : String(30);
+        CreatedOn   : Date;
+        Reviewed    : Boolean;
+        Approved    : Boolean
+}
+
+
 //type Gender : String enum {
 //    male;
 //    female;
