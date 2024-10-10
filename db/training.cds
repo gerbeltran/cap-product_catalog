@@ -1,6 +1,6 @@
 namespace com.training;
 
-using {cuid, } from '@sap/cds/common';
+using {cuid, Country} from '@sap/cds/common';
 
 entity Course : cuid {
     //    key ID      : UUID;
@@ -26,7 +26,9 @@ entity Orders {
         LastName    : String(30);
         CreatedOn   : Date;
         Reviewed    : Boolean;
-        Approved    : Boolean
+        Approved    : Boolean;
+        Country     : Country;
+        Status      : String(1);
 }
 
 
