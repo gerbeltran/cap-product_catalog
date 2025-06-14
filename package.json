@@ -20,15 +20,18 @@
   "devDependencies": {
     "@cap-js/sqlite": "^1",
     "@sap/eslint-plugin-cds": "^3",
-    "eslint": "^9"
+    "eslint": "^9",
+    "cds-plugin-ui5": "^0.9.3"
   },
   "scripts": {
-    "start": "cds watch"
+    "start": "cds watch",
+    "watch-product": "cds watch --open logaligroup.product/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-projectproduct": "cds watch --open logaligroup.projectproduct/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "cds": {
     "features": {
       "graphql": true
-        },
+    },
     "requires": {
       "sapbackend": {
         "kind": "odata-v2",
@@ -40,5 +43,12 @@
         }
       }
     }
-  }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/product",
+    "app/projectproduct"
+  ]
 }
